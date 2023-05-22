@@ -1,31 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse.c                                            :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aeroglu <aeroglu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/20 15:23:48 by aeroglu           #+#    #+#             */
-/*   Updated: 2023/05/22 17:35:20 by aeroglu          ###   ########.fr       */
+/*   Created: 2023/05/22 17:27:22 by aeroglu           #+#    #+#             */
+/*   Updated: 2023/05/22 17:33:46 by aeroglu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_arg	*parse_arg(char **str)
+void	free_philo(t_philo **ph)
 {
-	t_arg	*arg;
+	t_philo	**head;
 
-	arg = (t_arg *)malloc(sizeof(t_arg));
-	arg->nb_philo = ft_atol(*str++);
-	arg->die_time = ft_atol(*str++);
-	arg->eat_time = ft_atol(*str++);
-	arg->sleep_time = ft_atol(*str++);
-	if (*str)
-		arg->max_eat = ft_atol(*str++);
-	else
-		arg->max_eat = -1;
-	arg->philo_ate = 0;
-	arg->stop_sim = 0;
-	return (arg);
+	head = ph;
+	while (ph && *ph)
+		free(*ph++);
+	free(head);
+}
+
+void	free_arg(t_arg *arg)
+{
+	int	i;
+
+	i = -1;
+	while (++i < arg->nb_philo)
+		pthread_mutex_destroy(&arg->forks[i]);
+	free(arg->forks);
+	pthread_mutex_destroy(&arg->print_lock);
+	pthread_mutex_destroy(&arg->check_lock);
+	pthread_mutex_destroy(&arg->nb_lock);
+	pthread_mutex_destroy(&arg->death_lock);
+	free(arg);
 }
